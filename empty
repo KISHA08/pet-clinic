@@ -1,0 +1,164 @@
+
+
+
+
+<?php
+session_start();
+
+if (isset($_POST["submit"])) {
+    $_SESSION["user"] = $_POST["semail"];
+    $_SESSION["password"] = $_POST["spassword"];
+}
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $semail = $_POST["semail"];
+    $spassword = $_POST["spassword"];
+
+    // Check if both fields are filled
+    if (empty($semail) || empty($spassword)) {
+        $_SESSION["error"] = "All fields are required";
+        header("Location: index.php");
+        exit;
+    } else {
+        // Require the database connection
+        require_once "components/database.php";
+
+        // Query the adminn table
+        $sql = "SELECT * FROM adminn WHERE email = ?";
+        $stmt = $conn->prepare($sql);
+        if ($stmt === false) {
+            die('Prepare() failed: ' . htmlspecialchars($conn->error));
+        }
+        $stmt->bind_param("s", $semail);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows == 1) {
+            $row = $result->fetch_assoc();
+            if (password_verify($spassword, $row['password'])) {
+                $_SESSION["admin"] = $row; // Store admin details in session if needed
+                header("Location: Admin/dashboard.php");
+                exit;
+            } else {
+                $_SESSION["error"] = "Incorrect password for admin";
+                header("Location: index.php");
+                exit;
+            }
+        }
+        $stmt->close(); // Close statement after admin check
+
+        // Query the signup table
+        $sql = "SELECT * FROM signup WHERE email = ?";
+        $stmt = $conn->prepare($sql);
+        if ($stmt === false) {
+            die('Prepare() failed: ' . htmlspecialchars($conn->error));
+        }
+        $stmt->bind_param("s", $semail);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows == 1) {
+            $row = $result->fetch_assoc();
+            if (password_verify($spassword, $row['password'])) {
+                $_SESSION["user"] = $row; // Store user details in session if needed
+                header("Location: home.php");
+                exit;
+            } else {
+                $_SESSION["error"] = "Incorrect password for user";
+                header("Location: index.php");
+                exit;
+            }
+        } else {
+            $_SESSION["error"] = "User not found";
+            header("Location: index.php");
+            exit;
+        }
+        
+        $stmt->close(); // Close statement after user check
+        $conn->close(); // Close the database connection
+    }
+}
+?>
+
+
+
+
+.profile-container {
+    max-width: 800px;
+    height: auto; /* Allow height to auto-adjust based on content */
+    margin: 30px auto;
+    padding: 20px;
+    background: url(../img/bg.png) no-repeat;
+    border-radius: 8px;
+    border: 2px solid #0394D7;
+}
+
+.profile-container h1 {
+    text-align: center;
+    font-size: 36px;
+    margin-bottom: 40px;
+    color: #005881;
+}
+
+.profile-card {
+    display: flex;
+    flex-direction: column; /* Use column to stack items vertically */
+    justify-content: center;
+    align-items: center;
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.profile-image {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px; /* Add some space below the image */
+}
+
+.profile-image img {
+    border-radius: 50%; /* Make the image circular */
+    border: 1px solid #ddd;
+    background-color: #a8a8a8;
+    width: 100px;
+    height: 100px;
+}
+
+.profile-info {
+    width: 100%;
+}
+
+.profile-info h2 {
+    text-align: center; /* Center align the heading */
+    font-size: 24px;
+    color: #444;
+    margin-top: 0;
+    margin-bottom: 20px; /* Add space between title and table */
+}
+
+.profile-info table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+.profile-info td {
+    padding: 10px 0;
+    border-bottom: 1px solid #f2f2f2;
+}
+
+.profile-info td:first-child {
+    font-weight: bold;
+    color: #555;
+    width: 150px; /* Fixed width to align labels and data */
+}
+
+.profile-info td:last-child {
+    color: #333; /* Different color for data text */
+}
+
+.profile-info tr:last-child td {
+    border-bottom: none; /* Remove border from last row */
+}
