@@ -1,8 +1,28 @@
 # pet-clinic
-final year project
-this is my final year project 
-i developed this using html,css,js,bootstrap,php(i use some template for some interface)
-it has a simple registeration and login and login for admin 
-admin page can also login with the same login provide for user the admiin USER:nitha  , PASS:8888  
-admin can view the appoinmets, create the doctor details, create user details , add products and update the products
-the user can book appoinment, view details
+Pet-Clinic
+Final Year Project
+This is my final year project, a Pet Clinic management system, developed using HTML, CSS, JavaScript, Bootstrap, and PHP. I used a template for some of the interfaces to speed up the development process.
+
+Features
+User Registration and Login:
+
+Simple registration and login system for users.
+Admin can log in using the same login page provided for users.
+Admin Login:
+
+Admin Credentials:
+Username: nitha
+Password: 8888
+Admin Panel:
+
+View and manage appointments.
+Create and manage doctor details.
+Create and manage user details.
+Add and update products in the system.
+User Panel:
+
+Book appointments.
+View their details.
+Notes
+The admin and user share the same login interface, with admin access provided by specific credentials.
+
